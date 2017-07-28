@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -138,27 +139,33 @@ public class ConwayLifeGame {
 //        			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 //        	};
 
-        	/// Glider
-        	int[][] glider = new int[][] {
-        			{0, 1, 0}, 
-        			{0, 0, 1}, 
-        			{1, 1, 1}, 
-        	};
-
-        	for(int i = 0; i < 3; i++) {
-        		int tmp = glider[i][0];
-        		glider[i][0] = glider[0][i];
-        		glider[0][i] = tmp;
-        	}
-
-        	int baseX = columnCount / 2 - 1;
-        	int baseY = rowCount / 2 - 1;
+//        	/// Glider
+//        	int[][] glider = new int[][] {
+//        			{0, 1, 0}, 
+//        			{0, 0, 1}, 
+//        			{1, 1, 1}, 
+//        	};
+//
+//        	for(int i = 0; i < 3; i++) {
+//        		int tmp = glider[i][0];
+//        		glider[i][0] = glider[0][i];
+//        		glider[0][i] = tmp;
+//        	}
+//
+//        	int baseX = columnCount / 2 - 1;
+//        	int baseY = rowCount / 2 - 1;
+//        	
+//        	for(int i = 0; i < 3; i++) {
+//        		for(int j = 0; j < 3; j++) {
+//        			currentGeneration[baseX + i][baseY + j] = glider[i][j];
+//        		}
+//        	}
         	
-        	for(int i = 0; i < 3; i++) {
-        		for(int j = 0; j < 3; j++) {
-        			currentGeneration[baseX + i][baseY + j] = glider[i][j];
-        		}
-        	}
+            for(int i = 0; i < columnCount; i++) {
+            	for(int j = 0; j < rowCount; j++) {
+            		currentGeneration[i][j] = ThreadLocalRandom.current().nextInt(0, 1 + 1);
+            	}
+            }
             repaint();
         }
 
