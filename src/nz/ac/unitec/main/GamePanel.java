@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private int columnCount = 20;
-    private int rowCount = 20;
+	private int columnCount = 40;
+    private int rowCount = 40;
 	private List<Rectangle> cells;
     private int[][] generation;
     Timer timer;
