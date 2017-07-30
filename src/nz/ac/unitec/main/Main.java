@@ -5,9 +5,8 @@
  */
 
 /*
- * @todo 1. Add wrap around
- * @todo 2. Add preset (typical shapes) selection
- * @todo 3. Add game field dimensions selection
+ * @todo 1. Add preset (typical shapes) selection
+ * @todo 2. Add game field dimensions selection
  */
 
 package nz.ac.unitec.main;

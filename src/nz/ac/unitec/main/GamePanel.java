@@ -1,10 +1,15 @@
+/*
+ * @note game field design borrowed on 
+ * @note https://stackoverflow.com/questions/15421708/how-to-draw-grid-using-swing-class-java-and-detect-mouse-position-when-click-and
+ */
+
+
 package nz.ac.unitec.main;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,8 +25,8 @@ import javax.swing.JPanel;
 public class GamePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private int columnCount = 40;
-    private int rowCount = 40;
+	private int columnCount = 100;
+    private int rowCount = 100;
 	private List<Rectangle> cells;
     private int[][] generation;
     Timer timer;
@@ -61,6 +66,15 @@ public class GamePanel extends JPanel {
         addMouseListener(mouseHandler);
 	}
 	
+	public void Clear() {
+        for(int i = 0; i < columnCount; i++) {
+        	for(int j = 0; j < rowCount; j++) {
+        		generation[i][j] = 0;
+        	}
+        }
+        repaint();
+	}
+	
 	public void ZeroGeneration(int type) {
 		if(type == 0) {
 	        for(int i = 0; i < columnCount; i++) {
@@ -80,21 +94,20 @@ public class GamePanel extends JPanel {
 		
         for(int i = 0; i < columnCount; i++) {
         	for(int j = 0; j < rowCount; j++) {
-        		if((i == 0) || (j == 0) || (i == columnCount - 1) || (j == rowCount - 1)) {
-        			continue;
-        		}
+//        		if((i == 0) || (j == 0) || (i == columnCount - 1) || (j == rowCount - 1)) {
+//        			continue;
+//        		}
         		
         		int neighbors = 
-        				generation[i - 1][j - 1] + 
-            			generation[i][j - 1] + 
-            			generation[i + 1][j - 1] + 
-            			generation[i - 1][j] + 
-//            			generation[i][j] + 
-            			generation[i + 1][j] + 
-            			generation[i - 1][j + 1] + 
-            			generation[i][j + 1] + 
-            			generation[i + 1][j + 1];
-
+        				generation[i == 0 ? columnCount - 1 : i - 1][j == 0 ? rowCount - 1 : j - 1] + 
+            			generation[i][j == 0 ? rowCount - 1 : j - 1] + 
+            			generation[i == columnCount - 1 ? 0 : i + 1][j == 0 ? rowCount - 1 : j - 1] + 
+            			generation[i == 0 ? columnCount - 1 : i - 1][j] + 
+            			generation[i == columnCount - 1 ? 0 : i + 1][j] + 
+            			generation[i == 0 ? columnCount - 1 : i - 1][j == rowCount - 1 ? 0 : j + 1] + 
+            			generation[i][j == rowCount - 1 ? 0 : j + 1] + 
+            			generation[i == columnCount - 1 ? 0 : i + 1][j == rowCount - 1 ? 0 : j + 1];
+        		
         		next[i][j] = 0;
         		
         		/// Rule 1

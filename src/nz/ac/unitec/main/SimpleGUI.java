@@ -15,12 +15,14 @@ public class SimpleGUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private GamePanel pnlGame = new GamePanel();
-	private JButton btnNext = new JButton("Next Generation");
-	private JButton btnStartStop = new JButton("Start!");
 	private JButton btnZeroGen = new JButton("Produce Zero Generation");
 	private JRadioButton rbtnGenRandom = new JRadioButton("Random");
 	private JRadioButton rbtnGenGlider = new JRadioButton("Glider");
+	private JButton btnClear = new JButton("Clear");
+	private JButton btnNext = new JButton("Next Generation");
+	private JButton btnStartStop = new JButton("Start!");
 	private JLabel lblGen = new JLabel("");
+	
 	private boolean started;
 	
 	public SimpleGUI () {
@@ -31,28 +33,33 @@ public class SimpleGUI extends JFrame {
 		
 		Container container = this.getContentPane();
 		container.setLayout(new FlowLayout());
-		container.add(pnlGame);
-		
-		container.add(btnZeroGen);
 		
 		ButtonGroup btngrGen = new ButtonGroup();
 		btngrGen.add(rbtnGenRandom);
 		btngrGen.add(rbtnGenGlider);
 		rbtnGenRandom.setSelected(true);
 		
+		container.add(pnlGame);
+		container.add(btnZeroGen);
 		container.add(rbtnGenRandom);
 		container.add(rbtnGenGlider);
-		
+		container.add(btnClear);
 		container.add(btnNext);
 		container.add(btnStartStop);
-		
 		container.add(lblGen);
-		
+
+		btnZeroGen.addActionListener(new ZeroGenEventListener());
+		btnClear.addActionListener(new ClearEventListener());
 		btnNext.addActionListener(new NextEventListener());
 		btnStartStop.addActionListener(new StartEventListener());
-		btnZeroGen.addActionListener(new ZeroGenEventListener());
 		
 		started = false;
+	}
+	
+	class ClearEventListener implements ActionListener {
+		public void actionPerformed (ActionEvent e) {
+			pnlGame.Clear();
+		}
 	}
 	
 	class NextEventListener implements ActionListener {
