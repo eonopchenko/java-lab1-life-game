@@ -18,6 +18,9 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	private JButton btnRandomGen = new JButton("Produce Random Generation");
 	private JRadioButton rbtnShapeCell = new JRadioButton("Cell");
 	private JRadioButton rbtnShapeGlider = new JRadioButton("Glider");
+	private JRadioButton rbtnShapeRPentomino = new JRadioButton("R-Pentomino");
+	private JRadioButton rbtnShapeSpaceship1 = new JRadioButton("Spaceship 1");
+	private JRadioButton rbtnShapeGliderGun = new JRadioButton("Glider Gun");
 	private JButton btnClear = new JButton("Clear");
 	private JButton btnNext = new JButton("Next Generation");
 	private JButton btnStartStop = new JButton("Start!");
@@ -36,12 +39,18 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		ButtonGroup btngrGen = new ButtonGroup();
 		btngrGen.add(rbtnShapeCell);
 		btngrGen.add(rbtnShapeGlider);
+		btngrGen.add(rbtnShapeRPentomino);
+		btngrGen.add(rbtnShapeSpaceship1);
+		btngrGen.add(rbtnShapeGliderGun);
 		rbtnShapeCell.setSelected(true);
 		
 		container.add(pnlGame);
 		container.add(btnRandomGen);
 		container.add(rbtnShapeCell);
 		container.add(rbtnShapeGlider);
+		container.add(rbtnShapeRPentomino);
+		container.add(rbtnShapeSpaceship1);
+		container.add(rbtnShapeGliderGun);
 		container.add(btnClear);
 		container.add(btnNext);
 		container.add(btnStartStop);
@@ -49,6 +58,9 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		
 		rbtnShapeCell.addActionListener(new ShapeCellEventListener());
 		rbtnShapeGlider.addActionListener(new ShapeGliderEventListener());
+		rbtnShapeRPentomino.addActionListener(new ShapeRPentominoEventListener());
+		rbtnShapeSpaceship1.addActionListener(new ShapeSpaceship1EventListener());
+		rbtnShapeGliderGun.addActionListener(new ShapeGliderGunEventListener());
 		btnRandomGen.addActionListener(new RandomGenEventListener());
 		btnClear.addActionListener(new ClearEventListener());
 		btnNext.addActionListener(new NextEventListener());
@@ -76,6 +88,27 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		@Override
 		public void actionPerformed (ActionEvent e) {
 			pnlGame.SetShape(GamePanel.Shape.GLIDER);
+		}
+	}
+	
+	class ShapeRPentominoEventListener implements ActionListener {
+		@Override
+		public void actionPerformed (ActionEvent e) {
+			pnlGame.SetShape(GamePanel.Shape.R_PENTONIMO);
+		}
+	}
+	
+	class ShapeSpaceship1EventListener implements ActionListener {
+		@Override
+		public void actionPerformed (ActionEvent e) {
+			pnlGame.SetShape(GamePanel.Shape.SPACESHIP_1);
+		}
+	}
+	
+	class ShapeGliderGunEventListener implements ActionListener {
+		@Override
+		public void actionPerformed (ActionEvent e) {
+			pnlGame.SetShape(GamePanel.Shape.GLIDER_GUN);
 		}
 	}
 	
