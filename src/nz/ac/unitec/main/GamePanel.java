@@ -29,11 +29,13 @@ public class GamePanel extends JPanel {
     private int rowCount = 100;
 	private List<Rectangle> cells;
     private int[][] generation;
-    Timer timer;
+    private Timer timer;
+    private UpdateGenLabelInterface updateGenLabel;
 
-	GamePanel() {
+	GamePanel(UpdateGenLabelInterface updateGenLabel) {
 		cells = new ArrayList<>(columnCount * rowCount);
         generation = new int[columnCount][rowCount];
+        this.updateGenLabel = updateGenLabel;
         
         MouseAdapter mouseHandler;
         mouseHandler = new MouseAdapter() {
@@ -47,8 +49,8 @@ public class GamePanel extends JPanel {
 
                 if (e.getX() >= 0 && e.getY() >= 0) {
 
-                    int column = (e.getX() - 0) / cellWidth - 1;
-                    int row = (e.getY() - 0) / cellHeight - 1;
+                    int column = (e.getX() - 0) / cellWidth;
+                    int row = (e.getY() - 0) / cellHeight;
 
                     if (column >= 0 && row >= 0 && column < columnCount && row < rowCount) {
                     	if(generation[column][row] == 0) {
@@ -94,10 +96,6 @@ public class GamePanel extends JPanel {
 		
         for(int i = 0; i < columnCount; i++) {
         	for(int j = 0; j < rowCount; j++) {
-//        		if((i == 0) || (j == 0) || (i == columnCount - 1) || (j == rowCount - 1)) {
-//        			continue;
-//        		}
-        		
         		int neighbors = 
         				generation[i == 0 ? columnCount - 1 : i - 1][j == 0 ? rowCount - 1 : j - 1] + 
             			generation[i][j == 0 ? rowCount - 1 : j - 1] + 
@@ -133,6 +131,8 @@ public class GamePanel extends JPanel {
         }
         
         repaint();
+        
+        updateGenLabel.updateGenLabelEvent();
 	}
 	
 	public class GameThread extends TimerTask {

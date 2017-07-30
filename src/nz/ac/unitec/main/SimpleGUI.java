@@ -11,22 +11,21 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 
-public class SimpleGUI extends JFrame {
+public class SimpleGUI extends JFrame implements UpdateGenLabelInterface {
 	private static final long serialVersionUID = 1L;
 	
-	private GamePanel pnlGame = new GamePanel();
+	private GamePanel pnlGame = new GamePanel(this);
 	private JButton btnZeroGen = new JButton("Produce Zero Generation");
 	private JRadioButton rbtnGenRandom = new JRadioButton("Random");
 	private JRadioButton rbtnGenGlider = new JRadioButton("Glider");
 	private JButton btnClear = new JButton("Clear");
 	private JButton btnNext = new JButton("Next Generation");
 	private JButton btnStartStop = new JButton("Start!");
-	private JLabel lblGen = new JLabel("");
-	
+	private JLabel lblGen = new JLabel("0");
 	private boolean started;
 	
 	public SimpleGUI () {
-		super("Simple Example");
+		super("Life Game GUI");
 		this.setBounds(100, 100, 800, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
@@ -56,6 +55,10 @@ public class SimpleGUI extends JFrame {
 		started = false;
 	}
 	
+	public void updateGenLabelEvent() {
+		lblGen.setText(Integer.toString(Integer.parseInt(lblGen.getText()) + 1));
+	}
+	
 	class ClearEventListener implements ActionListener {
 		public void actionPerformed (ActionEvent e) {
 			pnlGame.Clear();
@@ -65,7 +68,6 @@ public class SimpleGUI extends JFrame {
 	class NextEventListener implements ActionListener {
 		public void actionPerformed (ActionEvent e) {
 			pnlGame.NextGeneration();
-			lblGen.setText(Integer.toString(Integer.parseInt(lblGen.getText()) + 1));
 		}
 	}
 	
