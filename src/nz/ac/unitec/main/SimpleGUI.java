@@ -16,12 +16,12 @@ public class SimpleGUI extends JFrame {
 	
 	private GamePanel pnlGame = new GamePanel();
 	private JButton btnNext = new JButton("Next Generation");
-	private JButton btnStart = new JButton("Start!");
-	private JButton btnStop = new JButton("Stop");
+	private JButton btnStartStop = new JButton("Start!");
 	private JButton btnZeroGen = new JButton("Produce Zero Generation");
 	private JRadioButton rbtnGenRandom = new JRadioButton("Random");
 	private JRadioButton rbtnGenGlider = new JRadioButton("Glider");
 	private JLabel lblGen = new JLabel("");
+	private boolean started;
 	
 	public SimpleGUI () {
 		super("Simple Example");
@@ -44,15 +44,15 @@ public class SimpleGUI extends JFrame {
 		container.add(rbtnGenGlider);
 		
 		container.add(btnNext);
-		container.add(btnStart);
-		container.add(btnStop);
+		container.add(btnStartStop);
 		
 		container.add(lblGen);
 		
 		btnNext.addActionListener(new NextEventListener());
-		btnStart.addActionListener(new StartEventListener());
-		btnStop.addActionListener(new StopEventListener());
+		btnStartStop.addActionListener(new StartEventListener());
 		btnZeroGen.addActionListener(new ZeroGenEventListener());
+		
+		started = false;
 	}
 	
 	class NextEventListener implements ActionListener {
@@ -64,13 +64,15 @@ public class SimpleGUI extends JFrame {
 	
 	class StartEventListener implements ActionListener {
 		public void actionPerformed (ActionEvent e) {
-			pnlGame.Start();
-		}
-	}
-	
-	class StopEventListener implements ActionListener {
-		public void actionPerformed (ActionEvent e) {
-			pnlGame.Stop();
+			if(started) {
+				pnlGame.Stop();
+				btnStartStop.setText("Start!");
+				started = false;
+			} else {
+				pnlGame.Start();
+				btnStartStop.setText("Stop");
+				started = true;
+			}
 		}
 	}
 	

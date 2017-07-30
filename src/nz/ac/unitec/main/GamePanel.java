@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -26,6 +29,36 @@ public class GamePanel extends JPanel {
 	GamePanel() {
 		cells = new ArrayList<>(columnCount * rowCount);
         generation = new int[columnCount][rowCount];
+        
+        MouseAdapter mouseHandler;
+        mouseHandler = new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int width = getWidth();
+                int height = getHeight();
+
+                int cellWidth = width / columnCount;
+                int cellHeight = height / rowCount;
+
+                if (e.getX() >= 0 && e.getY() >= 0) {
+
+                    int column = (e.getX() - 0) / cellWidth - 1;
+                    int row = (e.getY() - 0) / cellHeight - 1;
+
+                    if (column >= 0 && row >= 0 && column < columnCount && row < rowCount) {
+                    	if(generation[column][row] == 0) {
+                    		generation[column][row] = 1;
+                    	} else {
+                    		generation[column][row] = 0;
+                    	}
+                    }
+
+                }
+                repaint();
+
+            }
+        };
+        addMouseListener(mouseHandler);
 	}
 	
 	public void ZeroGeneration(int type) {
@@ -45,8 +78,12 @@ public class GamePanel extends JPanel {
 	public void NextGeneration() {
 		int[][] next = new int[columnCount][rowCount];
 		
-        for(int i = 1; i < columnCount - 1; i++) {
-        	for(int j = 1; j < rowCount - 1; j++) {
+        for(int i = 0; i < columnCount; i++) {
+        	for(int j = 0; j < rowCount; j++) {
+        		if((i == 0) || (j == 0) || (i == columnCount - 1) || (j == rowCount - 1)) {
+        			continue;
+        		}
+        		
         		int neighbors = 
         				generation[i - 1][j - 1] + 
             			generation[i][j - 1] + 
@@ -85,7 +122,7 @@ public class GamePanel extends JPanel {
         repaint();
 	}
 	
-	public class HelloThread extends TimerTask {
+	public class GameThread extends TimerTask {
 	    public void run() {
 	    	NextGeneration();
 	    }
@@ -93,11 +130,14 @@ public class GamePanel extends JPanel {
 	
 	public void Start() {
 		timer = new Timer();
-		timer.schedule(new HelloThread(), 0, 100);
+		timer.schedule(new GameThread(), 0, 10);
 	}
 	
 	public void Stop() {
-		timer.cancel();
+		if(timer != null) {
+			timer.cancel();
+			timer = null;
+		}
 	}
 	
     @Override
@@ -143,7 +183,7 @@ public class GamePanel extends JPanel {
         		if(generation[i][j] != 0) {
                     int index = i + (j * columnCount);
                     Rectangle cell = cells.get(index);
-                    g2d.setColor(Color.BLUE);
+                    g2d.setColor(Color.MAGENTA);
                     g2d.fill(cell);
         		}
         	}
