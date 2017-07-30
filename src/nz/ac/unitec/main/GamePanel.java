@@ -19,76 +19,123 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-
+	
+	/// Supported shapes
+	public enum Shape {
+		CELL,
+		GLIDER,
+	}
+	
 	private int columnCount = 100;
     private int rowCount = 100;
 	private List<Rectangle> cells;
     private int[][] generation;
+    private int[][] generationTmp;
     private Timer timer;
     private UpdateGenLabelInterface updateGenLabel;
+    private boolean temp;
+    private Shape shape;
 
 	GamePanel(UpdateGenLabelInterface updateGenLabel) {
 		cells = new ArrayList<>(columnCount * rowCount);
         generation = new int[columnCount][rowCount];
+        generationTmp = new int[columnCount][rowCount];
         this.updateGenLabel = updateGenLabel;
         
         MouseAdapter mouseHandler;
         mouseHandler = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                for(int i = 0; i < columnCount; i++) {
+                	for(int j = 0; j < rowCount; j++) {
+                		generation[i][j] = generationTmp[i][j];
+                	}
+                }
+            }
+            
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                for(int i = 0; i < columnCount; i++) {
+                	for(int j = 0; j < rowCount; j++) {
+                		generationTmp[i][j] = generation[i][j];
+                	}
+                }
+                
                 int width = getWidth();
                 int height = getHeight();
-
+                
                 int cellWidth = width / columnCount;
                 int cellHeight = height / rowCount;
-
+                
                 if (e.getX() >= 0 && e.getY() >= 0) {
-
                     int column = (e.getX() - 0) / cellWidth;
                     int row = (e.getY() - 0) / cellHeight;
 
-                    if (column >= 0 && row >= 0 && column < columnCount && row < rowCount) {
-                    	if(generation[column][row] == 0) {
-                    		generation[column][row] = 1;
-                    	} else {
-                    		generation[column][row] = 0;
+                    if (column >= 1 && row >= 1 && column < columnCount - 1 && row < rowCount - 1) {
+                    	
+                    	if(shape == Shape.CELL) {
+                        	if(generationTmp[column][row] == 0) {
+                        		generationTmp[column][row] = 1;
+                        	} else {
+                        		generationTmp[column][row] = 0;
+                        	}
+                    	} else if(shape == Shape.GLIDER) {
+	                    	generationTmp[column - 1][row - 1] = 0;
+	                    	generationTmp[column][row - 1] = 1;
+	                    	generationTmp[column + 1][row - 1] = 0;
+	                    	
+	                    	generationTmp[column - 1][row] = 0;
+	                    	generationTmp[column + 1][row] = 1;
+	                    	
+	                    	generationTmp[column - 1][row + 1] = 1;
+	                    	generationTmp[column][row + 1] = 1;
+	                    	generationTmp[column + 1][row + 1] = 1;
                     	}
+                    	
+                    	
                     }
-
                 }
+                temp = true;
                 repaint();
-
             }
         };
+        
         addMouseListener(mouseHandler);
+        addMouseMotionListener(mouseHandler);
+        
+        temp = false;
+        shape = Shape.CELL;
+	}
+	
+	public void SetShape(Shape shape) {
+		this.shape = shape;
 	}
 	
 	public void Clear() {
         for(int i = 0; i < columnCount; i++) {
         	for(int j = 0; j < rowCount; j++) {
         		generation[i][j] = 0;
+        		generationTmp[i][j] = 0;
         	}
         }
         repaint();
+        updateGenLabel.resetGenLabelEvent();
 	}
 	
-	public void ZeroGeneration(int type) {
-		if(type == 0) {
-	        for(int i = 0; i < columnCount; i++) {
-	        	for(int j = 0; j < rowCount; j++) {
-	        		generation[i][j] = ThreadLocalRandom.current().nextInt(0, 1 + 1);
-	        	}
+	public void RandomGeneration() {
+		for(int i = 0; i < columnCount; i++) {
+			for(int j = 0; j < rowCount; j++) {
+				int rand = ThreadLocalRandom.current().nextInt(0, 1 + 1);
+	        		generation[i][j] = rand;
+	        		generationTmp[i][j] = rand;
 	        }
-		} else if (type == 1) {
-			JOptionPane.showMessageDialog(null, "Here should be Glider!", "Generation", JOptionPane.PLAIN_MESSAGE);
 		}
-		
         repaint();
+        updateGenLabel.resetGenLabelEvent();
 	}
 	
 	public void NextGeneration() {
@@ -131,8 +178,7 @@ public class GamePanel extends JPanel {
         }
         
         repaint();
-        
-        updateGenLabel.updateGenLabelEvent();
+        updateGenLabel.incGenLabelEvent();
 	}
 	
 	public class GameThread extends TimerTask {
@@ -193,7 +239,8 @@ public class GamePanel extends JPanel {
 
         for(int i = 0; i < columnCount; i++) {
         	for(int j = 0; j < rowCount; j++) {
-        		if(generation[i][j] != 0) {
+        		int genCell = temp ? generationTmp[i][j] : generation[i][j];
+        		if(genCell != 0) {
                     int index = i + (j * columnCount);
                     Rectangle cell = cells.get(index);
                     g2d.setColor(Color.MAGENTA);
@@ -208,6 +255,8 @@ public class GamePanel extends JPanel {
         }
 
         g2d.dispose();
+        
+        temp = false;
     }
 }
 
