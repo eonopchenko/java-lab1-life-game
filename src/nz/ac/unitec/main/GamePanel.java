@@ -43,7 +43,59 @@ public class GamePanel extends JPanel {
     private UpdateGenLabelInterface updateGenLabel;
     private boolean temp;
     private Shape shape;
-
+    
+    private int patternGlider[][] = {
+    		{0, 1, 0}, 
+    		{0, 0, 1}, 
+    		{1, 1, 1},
+    };
+    
+    private int patternRPentonimo[][] = {
+    		{0, 1, 1}, 
+    		{1, 1, 0}, 
+    		{0, 1, 0},
+    };
+    
+    private int patternSpaceship1[][] = {
+    		{0, 1, 1, 1, 1, 1, 1},
+    		{1, 0, 0, 0, 0, 0, 1},
+    		{0, 0, 0, 0, 0, 0, 1},
+    		{1, 0, 0, 0, 0, 1, 0},
+    		{0, 0, 1, 1, 0, 0, 0},
+    };
+    
+    private int patternGliderGun[][] = {
+    		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0},
+    		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0}, 
+        	{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    		{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+        	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+        	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+    };
+    
+    private int patternGliderEater[][] = {
+    		{1, 1, 0, 0}, 
+    		{1, 0, 1, 0}, 
+    		{0, 0, 1, 0}, 
+    		{0, 0, 1, 1}, 
+    };
+    
+    private void placeShape(int x, int y, int[][] pattern) {
+		int rows = pattern.length;
+		int cols = pattern[0].length;
+		
+		if((x <= columnCount - cols) && (y <= rowCount - rows)) {
+			for (int i = 0; i < cols; i++) {
+				for (int j = 0; j < rows; j++) {
+					generationTmp[x + i][y + j] = pattern[j][i];
+				}
+			}
+		}
+    }
+    
 	GamePanel(UpdateGenLabelInterface updateGenLabel) {
 		cells = new ArrayList<>(columnCount * rowCount);
         generation = new int[columnCount][rowCount];
@@ -78,124 +130,23 @@ public class GamePanel extends JPanel {
                 if (e.getX() >= 0 && e.getY() >= 0) {
                     int column = (e.getX() - 0) / cellWidth;
                     int row = (e.getY() - 0) / cellHeight;
-
-                    if (column >= 1 && row >= 1 && column < columnCount - 1 && row < rowCount - 1) {
-                    	if(shape == Shape.CELL) {
-                        	if(generationTmp[column][row] == 0) {
-                        		generationTmp[column][row] = 1;
-                        	} else {
-                        		generationTmp[column][row] = 0;
-                        	}
-                    	} else if(shape == Shape.GLIDER) {
-	                    	generationTmp[column - 1][row - 1] = 0;
-	                    	generationTmp[column][row - 1] = 1;
-	                    	generationTmp[column + 1][row - 1] = 0;
-	                    	generationTmp[column - 1][row] = 0;
-	                    	generationTmp[column][row] = 0;
-	                    	generationTmp[column + 1][row] = 1;
-	                    	generationTmp[column - 1][row + 1] = 1;
-	                    	generationTmp[column][row + 1] = 1;
-	                    	generationTmp[column + 1][row + 1] = 1;
-                    	} else if(shape == Shape.R_PENTONIMO) {
-	                    	generationTmp[column - 1][row - 1] = 0;
-	                    	generationTmp[column][row - 1] = 1;
-	                    	generationTmp[column + 1][row - 1] = 1;
-	                    	generationTmp[column - 1][row] = 1;
-	                    	generationTmp[column][row] = 1;
-	                    	generationTmp[column + 1][row] = 0;
-	                    	generationTmp[column - 1][row + 1] = 0;
-	                    	generationTmp[column][row + 1] = 1;
-	                    	generationTmp[column + 1][row + 1] = 0;
-                    	}
-                    }
                     
-                    if(shape == Shape.SPACESHIP_1) {
-                		/// 7X5
-                		if((column <= columnCount - 7) && (row <= rowCount - 5)) {
-                			for (int i = column; i < column + 7; i++) {
-                				for (int j = row; j < row + 5; j++) {
-                					generationTmp[i][j] = 0;
-                				}
-                			}
-                			generationTmp[column + 0][row + 2] = 1;
-                			generationTmp[column + 0][row + 3] = 1;
-                			generationTmp[column + 0][row + 4] = 1;
-                			generationTmp[column + 1][row + 1] = 1;
-                			generationTmp[column + 1][row + 4] = 1;
-                			generationTmp[column + 2][row + 4] = 1;
-                			generationTmp[column + 3][row + 0] = 1;
-                			generationTmp[column + 3][row + 4] = 1;
-                			generationTmp[column + 4][row + 0] = 1;
-                			generationTmp[column + 4][row + 4] = 1;
-                			generationTmp[column + 5][row + 4] = 1;
-                			generationTmp[column + 6][row + 1] = 1;
-                			generationTmp[column + 6][row + 3] = 1;
-                		}
-                    }
-                    
-                    if(shape == Shape.GLIDER_GUN) {
-                		/// 36X9
-                		if((column <= columnCount - 36) && (row <= rowCount - 9)) {
-                			for (int i = column; i < column + 36; i++) {
-                				for (int j = row; j < row + 9; j++) {
-                					generationTmp[i][j] = 0;
-                				}
-                			}
-                			generationTmp[column + 0][row + 4] = 1;
-                			generationTmp[column + 0][row + 5] = 1;
-                			generationTmp[column + 1][row + 4] = 1;
-                			generationTmp[column + 1][row + 5] = 1;
-                			generationTmp[column + 10][row + 4] = 1;
-                			generationTmp[column + 10][row + 5] = 1;
-                			generationTmp[column + 10][row + 6] = 1;
-                			generationTmp[column + 11][row + 3] = 1;
-                			generationTmp[column + 11][row + 7] = 1;
-                			generationTmp[column + 12][row + 2] = 1;
-                			generationTmp[column + 12][row + 8] = 1;
-                			generationTmp[column + 13][row + 2] = 1;
-                			generationTmp[column + 13][row + 8] = 1;
-                			generationTmp[column + 14][row + 5] = 1;
-                			generationTmp[column + 15][row + 3] = 1;
-                			generationTmp[column + 15][row + 7] = 1;
-                			generationTmp[column + 16][row + 4] = 1;
-                			generationTmp[column + 16][row + 5] = 1;
-                			generationTmp[column + 16][row + 6] = 1;
-                			generationTmp[column + 17][row + 5] = 1;
-                			generationTmp[column + 20][row + 2] = 1;
-                			generationTmp[column + 20][row + 3] = 1;
-                			generationTmp[column + 20][row + 4] = 1;
-                			generationTmp[column + 21][row + 2] = 1;
-                			generationTmp[column + 21][row + 3] = 1;
-                			generationTmp[column + 21][row + 4] = 1;
-                			generationTmp[column + 22][row + 1] = 1;
-                			generationTmp[column + 22][row + 5] = 1;
-                			generationTmp[column + 24][row + 0] = 1;
-                			generationTmp[column + 24][row + 1] = 1;
-                			generationTmp[column + 24][row + 5] = 1;
-                			generationTmp[column + 24][row + 6] = 1;
-                			generationTmp[column + 34][row + 2] = 1;
-                			generationTmp[column + 34][row + 3] = 1;
-                			generationTmp[column + 35][row + 2] = 1;
-                			generationTmp[column + 35][row + 3] = 1;
-                		}
-                	}
-                    
-                    if(shape == Shape.GLIDER_EATER) {
-                		/// 4X4
-                		if((column <= columnCount - 4) && (row <= rowCount - 4)) {
-                			for (int i = column; i < column + 4; i++) {
-                				for (int j = row; j < row + 4; j++) {
-                					generationTmp[i][j] = 0;
-                				}
-                			}
-                			generationTmp[column + 0][row + 0] = 1;
-                			generationTmp[column + 0][row + 1] = 1;
-                			generationTmp[column + 1][row + 0] = 1;
-                			generationTmp[column + 2][row + 1] = 1;
-                			generationTmp[column + 2][row + 2] = 1;
-                			generationTmp[column + 2][row + 3] = 1;
-                			generationTmp[column + 3][row + 3] = 1;
-                		}
+                    if(shape == Shape.CELL) {
+                     	if(generationTmp[column][row] == 0) {
+                        	generationTmp[column][row] = 1;
+                        } else {
+                        	generationTmp[column][row] = 0;
+                        }
+                    } else if(shape == Shape.GLIDER) {
+                    	placeShape(column, row, patternGlider);
+                    } else if(shape == Shape.R_PENTONIMO) {
+                    	placeShape(column, row, patternRPentonimo);
+                    } else if(shape == Shape.SPACESHIP_1) {
+                    	placeShape(column, row, patternSpaceship1);
+                    } else if(shape == Shape.GLIDER_GUN) {
+                    	placeShape(column, row, patternGliderGun);
+                	} else if(shape == Shape.GLIDER_EATER) {
+                    	placeShape(column, row, patternGliderEater);
                     }
                 }
                 temp = true;
