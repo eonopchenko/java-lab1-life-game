@@ -1,14 +1,23 @@
 package nz.ac.unitec.main;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 public class GameFrame extends JFrame implements UpdateGenLabelInterface {
@@ -26,8 +35,22 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	private JButton btnNext = new JButton("Next Generation");
 	private JButton btnStartStop = new JButton("Start!");
 	private JLabel lblGen = new JLabel("0");
+    private JButton btnOpenFile = new JButton("Open CSV...", createImageIcon("images/Open16.gif"));
+    private JButton btnSaveFile = new JButton("Save to CSV...", createImageIcon("images/Save16.gif"));
+    private JFileChooser fc = new JFileChooser();
+	
 	private boolean started;
 	
+    protected static ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = FileChooser.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
+    
 	public GameFrame () {
 		super("Life Game GUI");
 		this.setBounds(100, 100, 800, 600);
@@ -59,6 +82,11 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		container.add(btnStartStop);
 		container.add(lblGen);
 		
+	    JPanel btnpnlFile = new JPanel();
+	    btnpnlFile.add(btnOpenFile);
+	    btnpnlFile.add(btnSaveFile);
+	    container.add(btnpnlFile, BorderLayout.PAGE_START);
+		
 		rbtnShapeCell.addActionListener(new ShapeCellEventListener());
 		rbtnShapeGlider.addActionListener(new ShapeGliderEventListener());
 		rbtnShapeRPentomino.addActionListener(new ShapeRPentominoEventListener());
@@ -69,6 +97,10 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		btnClear.addActionListener(new ClearEventListener());
 		btnNext.addActionListener(new NextEventListener());
 		btnStartStop.addActionListener(new StartEventListener());
+		btnOpenFile.addActionListener(new OpenFileEventListener());
+		btnSaveFile.addActionListener(new SaveFileEventListener());
+		
+		fc.setSelectedFile(new File("*.csv"));
 		
 		started = false;
 	}
@@ -126,7 +158,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	class ClearEventListener implements ActionListener {
 		@Override
 		public void actionPerformed (ActionEvent e) {
-			pnlGame.Clear();
+			pnlGame.ClearGameField();
 		}
 	}
 	
@@ -156,6 +188,51 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		@Override
 		public void actionPerformed (ActionEvent e) {
 			pnlGame.RandomGeneration();
+		}
+	}
+	
+	class OpenFileEventListener implements ActionListener {
+		@Override
+		public void actionPerformed (ActionEvent e) {
+            int returnVal = fc.showOpenDialog(GameFrame.this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                String csvFile = file.getAbsolutePath();
+                
+                try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+                	pnlGame.LoadGameField(br);
+                } catch (IOException ex) {
+					// TODO Auto-generated catch block
+                    ex.printStackTrace();
+                }
+            }
+		}
+	}
+	
+	class SaveFileEventListener implements ActionListener {
+		@Override
+		public void actionPerformed (ActionEvent e) {
+            int returnVal = fc.showSaveDialog(GameFrame.this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                pnlGame.SaveGameField();
+                try {
+					FileWriter fw = new FileWriter(file.getAbsolutePath());
+					String[][] str = pnlGame.SaveGameField();
+					for (int i = 0; i < str.length; i++) {
+						StringBuilder builder = new StringBuilder();
+						for(String s : str[i]) {
+						    builder.append(s);
+						}
+						fw.append(builder.toString() + '\n');
+					}
+					fw.flush();
+					fw.close();
+				} catch (IOException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+            }
 		}
 	}
 }

@@ -13,6 +13,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -165,7 +167,7 @@ public class GamePanel extends JPanel {
 		this.shape = shape;
 	}
 	
-	public void Clear() {
+	public void ClearGameField() {
         for(int i = 0; i < columnCount; i++) {
         	for(int j = 0; j < rowCount; j++) {
         		generation[i][j] = 0;
@@ -247,6 +249,29 @@ public class GamePanel extends JPanel {
 			timer.cancel();
 			timer = null;
 		}
+	}
+	
+	public void LoadGameField(BufferedReader br) throws IOException {
+		ClearGameField();
+        String line = "";
+        int row = 0;
+        while ((line = br.readLine()) != null) {
+            String[] lines = line.split(",");
+            for (int col = 0; col < lines.length; col++) {
+            	generation[col][row] = lines[col].equals("\"0\"") ? 0 : 1;
+            }
+            row++;
+        }
+	}
+	
+	public String[][] SaveGameField() {
+		String str[][] = new String[rowCount][columnCount];
+		for(int i = 0; i < columnCount; i++) {
+			for(int j = 0; j < rowCount; j++) {
+				str[j][i] = (generation[i][j] == 0 ? "\"0\"" : "\"1\"") + ',';
+        	}
+        }
+		return str;
 	}
 	
     @Override
