@@ -31,6 +31,7 @@ public class GamePanel extends JPanel {
 		R_PENTONIMO,
 		SPACESHIP_1,
 		GLIDER_GUN,
+		GLIDER_EATER,
 	}
 	
 	private int columnCount = 100;
@@ -178,6 +179,24 @@ public class GamePanel extends JPanel {
                 			generationTmp[column + 35][row + 3] = 1;
                 		}
                 	}
+                    
+                    if(shape == Shape.GLIDER_EATER) {
+                		/// 4X4
+                		if((column <= columnCount - 4) && (row <= rowCount - 4)) {
+                			for (int i = column; i < column + 4; i++) {
+                				for (int j = row; j < row + 4; j++) {
+                					generationTmp[i][j] = 0;
+                				}
+                			}
+                			generationTmp[column + 0][row + 0] = 1;
+                			generationTmp[column + 0][row + 1] = 1;
+                			generationTmp[column + 1][row + 0] = 1;
+                			generationTmp[column + 2][row + 1] = 1;
+                			generationTmp[column + 2][row + 2] = 1;
+                			generationTmp[column + 2][row + 3] = 1;
+                			generationTmp[column + 3][row + 3] = 1;
+                		}
+                    }
                 }
                 temp = true;
                 repaint();

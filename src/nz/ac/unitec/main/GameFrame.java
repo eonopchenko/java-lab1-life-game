@@ -21,6 +21,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	private JRadioButton rbtnShapeRPentomino = new JRadioButton("R-Pentomino");
 	private JRadioButton rbtnShapeSpaceship1 = new JRadioButton("Spaceship 1");
 	private JRadioButton rbtnShapeGliderGun = new JRadioButton("Glider Gun");
+	private JRadioButton rbtnShapeGliderEater = new JRadioButton("Glider Eater");
 	private JButton btnClear = new JButton("Clear");
 	private JButton btnNext = new JButton("Next Generation");
 	private JButton btnStartStop = new JButton("Start!");
@@ -42,6 +43,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		btngrGen.add(rbtnShapeRPentomino);
 		btngrGen.add(rbtnShapeSpaceship1);
 		btngrGen.add(rbtnShapeGliderGun);
+		btngrGen.add(rbtnShapeGliderEater);
 		rbtnShapeCell.setSelected(true);
 		
 		container.add(pnlGame);
@@ -51,6 +53,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		container.add(rbtnShapeRPentomino);
 		container.add(rbtnShapeSpaceship1);
 		container.add(rbtnShapeGliderGun);
+		container.add(rbtnShapeGliderEater);
 		container.add(btnClear);
 		container.add(btnNext);
 		container.add(btnStartStop);
@@ -61,6 +64,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		rbtnShapeRPentomino.addActionListener(new ShapeRPentominoEventListener());
 		rbtnShapeSpaceship1.addActionListener(new ShapeSpaceship1EventListener());
 		rbtnShapeGliderGun.addActionListener(new ShapeGliderGunEventListener());
+		rbtnShapeGliderEater.addActionListener(new ShapeGliderEaterEventListener());
 		btnRandomGen.addActionListener(new RandomGenEventListener());
 		btnClear.addActionListener(new ClearEventListener());
 		btnNext.addActionListener(new NextEventListener());
@@ -109,6 +113,13 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		@Override
 		public void actionPerformed (ActionEvent e) {
 			pnlGame.SetShape(GamePanel.Shape.GLIDER_GUN);
+		}
+	}
+	
+	class ShapeGliderEaterEventListener implements ActionListener {
+		@Override
+		public void actionPerformed (ActionEvent e) {
+			pnlGame.SetShape(GamePanel.Shape.GLIDER_EATER);
 		}
 	}
 	
