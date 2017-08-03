@@ -35,21 +35,11 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	private JButton btnNext = new JButton("Next Generation");
 	private JButton btnStartStop = new JButton("Start!");
 	private JLabel lblGen = new JLabel("0");
-    private JButton btnOpenFile = new JButton("Open CSV...", createImageIcon("images/Open16.gif"));
-    private JButton btnSaveFile = new JButton("Save to CSV...", createImageIcon("images/Save16.gif"));
+    private JButton btnOpenFile = new JButton("Open CSV...");
+    private JButton btnSaveFile = new JButton("Save to CSV...");
     private JFileChooser fc = new JFileChooser();
 	
 	private boolean started;
-	
-    protected static ImageIcon createImageIcon(String path) {
-        java.net.URL imgURL = FileChooser.class.getResource(path);
-        if (imgURL != null) {
-            return new ImageIcon(imgURL);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
-        }
-    }
     
 	public GameFrame () {
 		super("Life Game GUI");
