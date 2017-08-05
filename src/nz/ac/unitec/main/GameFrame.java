@@ -12,22 +12,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EtchedBorder;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import java.awt.GridLayout;
-import javax.swing.JMenuBar;
 
 public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	/**
@@ -111,6 +104,8 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		
 		/// JRadioButton - Cell (rdbtnCell)
 		JRadioButton rdbtnCell = new JRadioButton("Cell");
+//		JRadioButton rdbtnCell = new JRadioButton(new ImageIcon(GameFrame.class.getResource("/resources/CellDes16.gif")));
+//		rdbtnCell.setSelectedIcon(new ImageIcon(GameFrame.class.getResource("/resources/CellSel16.gif")));
 		rdbtnCell.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 			    if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -190,6 +185,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		
 		/// JButton - Load CSV... (btnLoadCSV)
 		JButton btnLoadCSV = new JButton("Load CSV...");
+		btnLoadCSV.setIcon(new ImageIcon(GameFrame.class.getResource("/resources/Open16.gif")));
 		menuBar.add(btnLoadCSV);
 		btnLoadCSV.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -208,6 +204,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		
 		/// JButton - Save CSV... (btnSaveCSV)
 		JButton btnSaveCSV = new JButton("Save CSV...");
+		btnSaveCSV.setIcon(new ImageIcon(GameFrame.class.getResource("/resources/Save16.gif")));
 		menuBar.add(btnSaveCSV);		
 		btnSaveCSV.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
