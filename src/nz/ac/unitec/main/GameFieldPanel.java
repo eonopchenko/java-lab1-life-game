@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -316,4 +318,30 @@ public class GameFieldPanel extends JPanel {
 			timer = null;
 		}
 	}
+	
+	/// Load game field
+	public void LoadGameField(BufferedReader br) throws IOException {
+		ClearGameField();
+        String line = "";
+        int row = 0;
+        while ((line = br.readLine()) != null) {
+            String[] lines = line.split(",");
+            for (int col = 0; col < lines.length; col++) {
+            	gen[col][row] = lines[col].equals("\"0\"") ? 0 : 1;
+            }
+            row++;
+        }
+	}
+	
+	/// Save game field
+	public String[][] SaveGameField() {
+		String str[][] = new String[rowCount][colCount];
+		for(int col = 0; col < colCount; col++) {
+			for(int row = 0; row < rowCount; row++) {
+				str[row][col] = (gen[col][row] == 0 ? "\"0\"" : "\"1\"") + ',';
+        	}
+        }
+		return str;
+	}
+	
 }

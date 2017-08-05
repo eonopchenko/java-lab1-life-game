@@ -5,14 +5,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EtchedBorder;
+import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.GridLayout;
+import javax.swing.JMenuBar;
 
 public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	/**
@@ -20,7 +35,8 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	JLabel lblGen;
+	private JLabel lblGen;
+	private JFileChooser fileChooser;
 	private boolean started;
 	
 	/// Constructor
@@ -168,6 +184,57 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		btngrPatterns.add(rdbtnGliderGun);
 		btngrPatterns.add(rdbtnGliderEater);
 		rdbtnCell.setSelected(true);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		/// JButton - Load CSV... (btnLoadCSV)
+		JButton btnLoadCSV = new JButton("Load CSV...");
+		menuBar.add(btnLoadCSV);
+		btnLoadCSV.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+	            if (fileChooser.showOpenDialog(GameFrame.this) == JFileChooser.APPROVE_OPTION) {
+	                File file = fileChooser.getSelectedFile();
+	                String path = file.getAbsolutePath();
+	                try (BufferedReader buffer = new BufferedReader(new FileReader(path))) {
+	                	pnlGameField.LoadGameField(buffer);
+	                } catch (IOException ex) {
+//						// TODO Auto-generated catch block
+	                    ex.printStackTrace();
+	                }
+	            }
+			}
+		});
+		
+		/// JButton - Save CSV... (btnSaveCSV)
+		JButton btnSaveCSV = new JButton("Save CSV...");
+		menuBar.add(btnSaveCSV);		
+		btnSaveCSV.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+	            if (fileChooser.showSaveDialog(GameFrame.this) == JFileChooser.APPROVE_OPTION) {
+	                File file = fileChooser.getSelectedFile();
+	                try {
+						FileWriter fileWriter = new FileWriter(file.getAbsolutePath());
+						String[][] str = pnlGameField.SaveGameField();
+						for (int i = 0; i < str.length; i++) {
+							StringBuilder builder = new StringBuilder();
+							for(String s : str[i]) {
+							    builder.append(s);
+							}
+							fileWriter.append(builder.toString() + '\n');
+						}
+						fileWriter.flush();
+						fileWriter.close();
+					} catch (IOException ex) {
+						// TODO Auto-generated catch block
+						ex.printStackTrace();
+					}
+	            }
+			}
+		});
+		
+		fileChooser = new JFileChooser();
+		fileChooser.setSelectedFile(new File("*.csv"));
 		
 		started = false;
 	}
