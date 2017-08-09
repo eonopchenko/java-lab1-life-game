@@ -44,7 +44,7 @@ public class GameFrame extends JFrame implements UpdateGenLabelInterface {
 		getContentPane().add(pnlControls, BorderLayout.NORTH);
 		
 		/// Game field panel (pnlGameField)
-		GameFieldPanel pnlGameField = new GameFieldPanel();
+		GameFieldPanel pnlGameField = GameFieldPanel.GetInstance();//new GameFieldPanel();
 		pnlGameField.SetUpdateGenLabelCallback(this);
 		pnlGameField.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		getContentPane().add(pnlGameField, BorderLayout.CENTER);

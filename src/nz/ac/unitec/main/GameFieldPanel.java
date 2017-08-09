@@ -1,9 +1,9 @@
 package nz.ac.unitec.main;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,7 +15,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class GameFieldPanel extends JPanel {
@@ -36,21 +35,21 @@ public class GameFieldPanel extends JPanel {
 	}
 	
 	/// Glider
-    private final int patternGlider[][] = {
+    protected final int patternGlider[][] = {
     		{0, 1, 0}, 
     		{0, 0, 1}, 
     		{1, 1, 1},
     };
     
     /// R-Pentonimo
-    private final int patternRPentonimo[][] = {
+    protected final int patternRPentonimo[][] = {
     		{0, 1, 1}, 
     		{1, 1, 0}, 
     		{0, 1, 0},
     };
     
     /// Spaceship 1
-    private final int patternSpaceship1[][] = {
+    protected final int patternSpaceship1[][] = {
     		{0, 1, 1, 1, 1, 1, 1},
     		{1, 0, 0, 0, 0, 0, 1},
     		{0, 0, 0, 0, 0, 0, 1},
@@ -59,7 +58,7 @@ public class GameFieldPanel extends JPanel {
     };
     
     /// Glider Gun
-    private final int patternGliderGun[][] = {
+    protected final int patternGliderGun[][] = {
     		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
     		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
     		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
@@ -72,13 +71,15 @@ public class GameFieldPanel extends JPanel {
     };
     
     /// Glider Eater
-    private final int patternGliderEater[][] = {
+    protected final int patternGliderEater[][] = {
     		{1, 1, 0, 0}, 
     		{1, 0, 1, 0}, 
     		{0, 0, 1, 0}, 
     		{0, 0, 1, 1}, 
     };
 
+    static private GameFieldPanel instance = null;
+    
     private UpdateGenLabelInterface updateGenLabel;
 	private final int colCount = 100;
     private final int rowCount = 100;
@@ -88,14 +89,22 @@ public class GameFieldPanel extends JPanel {
     private Pattern pattern;
     private Timer timer;
     private boolean temp;
+    
+    public static GameFieldPanel GetInstance() {
+    	if(instance == null) {
+    		instance = new GameFieldPanel();
+    	}
+    	return instance;
+    }
 	
     /// Constructor
-	public GameFieldPanel() {
+	protected GameFieldPanel() {
 		cells = new ArrayList<>(colCount * rowCount);
         gen = new int[colCount][rowCount];
         genTmp = new int[colCount][rowCount];
         pattern = Pattern.CELL;
         temp = false;
+        updateGenLabel = null;
         
         MouseAdapter mouseHandler = new MouseAdapter() {
             @Override
@@ -213,7 +222,7 @@ public class GameFieldPanel extends JPanel {
     ///--- GAME LOGIC IMPLEMENTATION ---///
     
     /// Placing a pattern on the game field
-    private void placePattern(int x, int y, int[][] pattern) {
+    protected void placePattern(int x, int y, int[][] pattern) {
 		int rows = pattern.length;
 		int cols = pattern[0].length;
 		
@@ -239,7 +248,10 @@ public class GameFieldPanel extends JPanel {
         	}
         }
         repaint();
-        updateGenLabel.resetGenLabelEvent();
+        
+        if(updateGenLabel != null) {
+        	updateGenLabel.resetGenLabelEvent();
+        }
 	}
 	
 	/// Placing of a random generation
@@ -251,7 +263,10 @@ public class GameFieldPanel extends JPanel {
 	        }
 		}
         repaint();
-        updateGenLabel.resetGenLabelEvent();
+        
+        if(updateGenLabel != null) {
+        	updateGenLabel.resetGenLabelEvent();
+        }
 	}
 	
 	/// Calculation of a new generation
@@ -295,7 +310,10 @@ public class GameFieldPanel extends JPanel {
         }
         
         repaint();
-        updateGenLabel.incGenLabelEvent();
+
+        if(updateGenLabel != null) {
+        	updateGenLabel.incGenLabelEvent();
+        }
 	}
 	
 	/// Game process thread
@@ -344,4 +362,51 @@ public class GameFieldPanel extends JPanel {
 		return str;
 	}
 	
+	
+	///--- UNIT TEST INTERFACES ---///
+	
+	public Point PlaceRandomCell() {
+		int col = ThreadLocalRandom.current().nextInt(0, colCount);
+		int row = ThreadLocalRandom.current().nextInt(0, rowCount);
+		gen[col][row] = genTmp[col][row] = 1;
+		return new Point(col, row);
+	}
+	
+	public Point GetRandomCell() {
+		return new Point(ThreadLocalRandom.current().nextInt(0, colCount), ThreadLocalRandom.current().nextInt(0, rowCount));
+	}
+	
+	public int GetCell(int x, int y) {
+		return gen[x][y];
+	}
+	
+	public void PlaceRandomNeighbors(int col, int row, int count) {
+		
+		if(count > 8 ) {
+			return;
+		}
+		
+		int[][] array = new int[3][3];
+		for (int i = 0; (i < count); i++) {
+			
+			int x = 1;
+			int y = 1;
+			
+			while(((x == 1) && (y == 1)) || (array[x][y] != 0)) {
+				x = ThreadLocalRandom.current().nextInt(0, 3);
+				y = ThreadLocalRandom.current().nextInt(0, 3);
+			}
+			
+			array[x][y] = 1;
+		}
+		
+		gen[col == 0 ? colCount - 1 : col - 1][row == 0 ? rowCount - 1 : row - 1] = array[0][0];
+		gen[col][row == 0 ? rowCount - 1 : row - 1] = array[1][0];
+		gen[col == colCount - 1 ? 0 : col + 1][row == 0 ? rowCount - 1 : row - 1] = array[2][0];
+		gen[col == 0 ? colCount - 1 : col - 1][row] = array[0][1];
+		gen[col == colCount - 1 ? 0 : col + 1][row] = array[2][1];
+		gen[col == 0 ? colCount - 1 : col - 1][row == rowCount - 1 ? 0 : row + 1] = array[0][2];
+		gen[col][row == rowCount - 1 ? 0 : row + 1] = array[1][2];
+		gen[col == colCount - 1 ? 0 : col + 1][row == rowCount - 1 ? 0 : row + 1] = array[2][2];
+	}
 }
