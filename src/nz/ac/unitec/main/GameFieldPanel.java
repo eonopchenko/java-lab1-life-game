@@ -324,9 +324,9 @@ public class GameFieldPanel extends JPanel {
 	}
 	
 	/// Start the game
-	public void Start() {
+	public void Start(int speed) {
 		timer = new Timer();
-		timer.schedule(new GameThread(), 0, 10);
+		timer.schedule(new GameThread(), 0, 1000/speed);
 	}
 	
 	/// Stop the game
